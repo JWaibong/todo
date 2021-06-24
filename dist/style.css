@@ -34,3 +34,16 @@ button{
 .button-active{
     background-color: gray;
 }
+
+#container{
+    display: flex;
+    flex-direction: row;
+    height: 1000px;
+    width: 2000px;
+}
+.content{
+    display: flex;
+    margin-left: 10px;
+    height: 1000px; 
+    width: 1000px;
+}
