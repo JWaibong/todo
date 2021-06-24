@@ -10,7 +10,6 @@ function initializeDOM(){
 
     let inbox = document.createElement("button");
     inbox.setAttribute("class", "button-active");
-
     inbox.setAttribute("id", "inbox");
     inbox.textContent = "Inbox";
     inbox.addEventListener("click", e => {
@@ -34,12 +33,13 @@ function initializeDOM(){
     week.addEventListener("click", e => {
         clickTab(e);
         loadWeekContent();
-
     });
     sidebar.appendChild(week);
 
     container.appendChild(content);
     loadInboxContent();
+
+
 
 
 }
@@ -77,6 +77,65 @@ function loadInboxContent(){
     addTaskButton.classList.add("add-task-button");
     addTaskButton.textContent = "Add Task";
     inboxContent.appendChild(addTaskButton);
+    addTaskButton.addEventListener("click", () => {
+        createPopUp(inboxContent, addTaskButton);
+
+    });
+
+    /* Stuff to add: 
+    the addtaskbutton should have an eventlistener that brings up a prompt to
+    allow the user to submit details about their todo task. 
+    During which, the addtaskbutton is removed until the user has submitted their 
+    todo
+    
+    Add the todo task to a list of current tasks. 
+    
+    Upon each reload of loadInbox Content, we need to get the tasks in order
+    (via sorting the list of tasks by date) and then re-display them each time.
+
+    Might have to seperate this loadInboxContent with another one just for page initialization
+    vs re-entry.
+
+
+
+
+    */
+}
+function createPopUp(inboxContent, addTaskButton){
+    const popUpBox = document.createElement("div");
+    popUpBox.setAttribute("id", "add-task-popup");
+    inboxContent.replaceChild(popUpBox, addTaskButton);
+
+    const input = document.createElement("input");
+    input.setAttribute("type", "text");
+    input.setAttribute("class", "input-add-task");
+    input.setAttribute("id", "input-add-task");
+
+    popUpBox.appendChild(input);
+
+    const add = document.createElement("button");
+    add.setAttribute("id", "add-task-confirm");
+    add.textContent = "Add";
+    add.addEventListener("click", e => {
+        loadInboxContent();
+
+    });
+
+
+    popUpBox.appendChild(add);
+
+    const cancel = document.createElement("button");
+    cancel.setAttribute("id", "cancel-task-confirm");
+    cancel.textContent = "Cancel";
+    cancel.addEventListener("click", e=> {
+        loadInboxContent();
+    });
+
+    popUpBox.appendChild(cancel);
+
+
+
+
 
 
 
@@ -108,6 +167,7 @@ function loadWeekContent(){
     weekContent.appendChild(title);
 
 }
+
 
 
 export{initializeDOM};

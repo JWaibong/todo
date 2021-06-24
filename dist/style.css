@@ -44,7 +44,7 @@ button:hover{
     cursor: pointer;
     outline: none;
     border: none;
-    width: 500px;
+    width: 95%;
     height: 50px;
     border-radius: 10px;
     text-align: center;
@@ -71,4 +71,65 @@ button:hover{
     font-family: sans-serif;
     font-weight: bold;
     font-size: 25px;
+}
+
+#add-task-popup{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    height: 200px;
+    width: 800px;
+    margin-left: 50px;
+
+    justify-content: center;
+
+
+}
+
+#input-add-task{
+    outline: none;
+    width: 95%;
+    height: 40px;
+    border: 1px solid;
+    border-radius: 5px;
+}
+#add-task-confirm{
+    margin-bottom: 50px;
+    font-family: sans-serif;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    height: 50px;
+    width: 100px;
+    text-align: center;
+    background-color: rgb(5, 216, 5);
+}
+
+#cancel-task-confirm{
+    margin-bottom: 50px;
+    margin-left: 5px;
+    font-family: sans-serif;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    height: 50px;
+    width: 100px;
+    text-align: center;
+    background-color: red;
+}
+input {
+    -webkit-writing-mode: horizontal-tb !important;
+    text-rendering: auto;
+    color: -internal-light-dark(black, white);
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0px;
+    text-shadow: none;
+    display: inline-block;
+    text-align: start;
+    appearance: auto;
+    background-color: -internal-light-dark(rgb(255, 255, 255), rgb(59, 59, 59));
+    -webkit-rtl-ordering: logical;
+    cursor: text;
 }
