@@ -66,20 +66,46 @@ function replaceContent(){
 
 function loadInboxContent(){
     const inboxContent = replaceContent();
-    inboxContent.textContent = "inbox";
+
+
+    const title = document.createElement("p");
+    title.textContent = "Inbox";
+    title.classList.add("tabTitle");
+    inboxContent.appendChild(title);
+
+    const addTaskButton = document.createElement("button");
+    addTaskButton.classList.add("add-task-button");
+    addTaskButton.textContent = "Add Task";
+    inboxContent.appendChild(addTaskButton);
+
+
+
+
+
 
 
 }
 
 function loadTodayContent(){
-    const todayConent = replaceContent();
-    todayConent.textContent = "today";
+    const todayContent = replaceContent();
+
+    const title = document.createElement("p");
+    title.textContent = "Today";
+    title.classList.add("tabTitle");
+    todayContent.appendChild(title);
+
+
 
 }
 
 function loadWeekContent(){
     const weekContent = replaceContent();
-    weekContent.textContent = "week";
+
+
+    const title = document.createElement("p");
+    title.textContent = "This Week";
+    title.classList.add("tabTitle");
+    weekContent.appendChild(title);
 
 }
 
