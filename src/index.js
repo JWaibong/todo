@@ -1,1 +1,2 @@
-console.log("heolo");
+import {initializeDOM} from './initialization.js';
+initializeDOM();

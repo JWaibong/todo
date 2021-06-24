@@ -1,0 +1,36 @@
+h1{
+    display: flex;
+    height: 75px;
+    color: black; 
+    background-color: olive;
+    width: auto;
+}
+#title{
+    align-self: center;
+    margin-left: 50px;
+    font-family: sans-serif;
+}
+#sidebar{
+    display: flex;
+    flex-wrap: wrap;
+    width: 300px;
+    height:300px;
+    background-color: lightgray;
+    justify-content: center;
+    align-content: flex-start;
+}
+button{
+    font-family: sans-serif;
+    cursor:pointer;
+    outline: none;
+    border: none;
+    margin-top: 10px;
+    width: 250px;
+    height: 50px;
+    border-radius: 10px;
+    text-align: center;
+    background-color: lightgray;
+}
+.button-active{
+    background-color: gray;
+}
