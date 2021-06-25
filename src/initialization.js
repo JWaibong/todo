@@ -1,3 +1,4 @@
+import {tasks, task} from './tasksAndProjects.js';
 function initializeDOM(){
     const container = document.getElementById("container");
     const sidebar = document.createElement("div");
@@ -73,6 +74,13 @@ function loadInboxContent(){
     title.classList.add("tabTitle");
     inboxContent.appendChild(title);
 
+    tasks.forEach(task => {
+        const taskDiv = document.createElement("div");
+        taskDiv.classList.add("task-div");
+        taskDiv.textContent = task.description; 
+        inboxContent.appendChild(taskDiv);
+    });
+
     const addTaskButton = document.createElement("button");
     addTaskButton.classList.add("add-task-button");
     addTaskButton.textContent = "Add Task";
@@ -117,6 +125,8 @@ function createPopUp(inboxContent, addTaskButton){
     add.setAttribute("id", "add-task-confirm");
     add.textContent = "Add";
     add.addEventListener("click", e => {
+        tasks.push(task(input.value, null));
+        console.log(tasks);
         loadInboxContent();
 
     });
