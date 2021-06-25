@@ -1,11 +1,14 @@
 
 let tasks = [];
-let task = (description, project) => {
+let task = (description, project,date) => {
     const proto = {
         type: "task",
-        project: project,
+        project,
+        currentIndex: null,
+        node: null,
+        date,
     }
-    return Object.assign({}, proto, {description, project});
+    return Object.assign({}, proto, {description, project, date});
 }
 
 
