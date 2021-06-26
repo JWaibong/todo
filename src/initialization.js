@@ -151,21 +151,14 @@ function loadProjectContent(project){
     const projectTasks = tasks.filter(task => task.project == project.title);
 
 
-
-
-
-
-}
-
-function loadTasks(content, taskList){
-    taskList.forEach((task,index) => {
+    projectTasks.forEach((task,index) => {
         task.currentIndex = index;
         const taskDiv = document.createElement("div");
         taskDiv.classList.add("task-div");
         taskDiv.setAttribute("id", `${index}`);
         task.node = taskDiv;
 
-        content.appendChild(taskDiv);
+        projectContent.appendChild(taskDiv);
         taskDiv.appendChild(icon(c).node[0]);
 
 
@@ -186,14 +179,28 @@ function loadTasks(content, taskList){
                 });
                 return index;
             }
-            content.removeChild(e.target.parentNode);
+            projectContent.removeChild(e.target.parentNode);
             tasks.splice(indexFunction(), 1);
-            loadInboxContent();
+            loadProjectContent(project);
 
         });
     });
 
+    const addTaskButton = document.createElement("button");
+    addTaskButton.classList.add("add-task-button");
+    addTaskButton.textContent = "Add Task";
+    projectContent.appendChild(addTaskButton);
+    addTaskButton.addEventListener("click", () => {
+        createProjectPopUp(projectContent, addTaskButton, project);
+
+    });
+
+
+
+
+
 }
+
 
 
 function loadInboxContent(){
@@ -207,6 +214,7 @@ function loadInboxContent(){
     tasks.sort((e1,e2) => {
         return compareAsc(e1.date, e2.date);
     });
+
 
     tasks.forEach((task,index) => {
         task.currentIndex = index;
@@ -255,11 +263,56 @@ function loadInboxContent(){
 
 
 
-
-function createPopUp(inboxContent, addTaskButton){
+function createProjectPopUp(content, addTaskButton,project){
     const popUpBox = document.createElement("div");
     popUpBox.setAttribute("id", "add-task-popup");
-    inboxContent.replaceChild(popUpBox, addTaskButton);
+    content.replaceChild(popUpBox, addTaskButton);
+
+    const input = document.createElement("input");
+    input.setAttribute("type", "text");
+    input.setAttribute("class", "input-add-task");
+    input.setAttribute("id", "input-add-task");
+    const dateInput = document.createElement("input");
+    dateInput.setAttribute("id", "date-input");
+    dateInput.setAttribute("type", "date");
+
+    popUpBox.appendChild(input);
+    popUpBox.appendChild(dateInput);
+
+
+    const add = document.createElement("button");
+    add.setAttribute("id", "add-task-confirm");
+    add.textContent = "Add";
+    add.addEventListener("click", e => {
+        if(dateInput.value == null || dateInput.value == ""){
+            tasks.push(task(input.value, project.title, -2));  
+        }
+        else{
+            const dateTokens = dateInput.value.split('-');
+            const date = new Date(dateTokens[0], `${Number(dateTokens[1]) - 1}`, dateTokens[2]);
+            tasks.push(task(input.value, project.title, date));  
+        }
+        loadProjectContent(project);
+
+    });
+
+
+    popUpBox.appendChild(add);
+
+    const cancel = document.createElement("button");
+    cancel.setAttribute("id", "cancel-task-confirm");
+    cancel.textContent = "Cancel";
+    cancel.addEventListener("click", e=> {
+        loadProjectContent();
+    });
+
+    popUpBox.appendChild(cancel);
+}
+
+function createPopUp(content, addTaskButton){
+    const popUpBox = document.createElement("div");
+    popUpBox.setAttribute("id", "add-task-popup");
+    content.replaceChild(popUpBox, addTaskButton);
 
     const input = document.createElement("input");
     input.setAttribute("type", "text");
