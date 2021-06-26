@@ -1,11 +1,11 @@
-import {tasks, task} from './tasksAndProjects.js';
+import {tasks, task, project, projects} from './tasksAndProjects.js';
 import {library, icon} from '@fortawesome/fontawesome-svg-core';
 import {faCircle as faFaCircle} from '@fortawesome/free-regular-svg-icons';
 library.add(faFaCircle);
 import { findIconDefinition } from '@fortawesome/fontawesome-svg-core'
 const c = findIconDefinition({ prefix: 'far', iconName: 'circle'});
 
-import { compareAsc, format, isToday } from 'date-fns';
+import { compareAsc, format, isThisWeek, isToday } from 'date-fns';
 
 function initializeDOM(){
     const container = document.getElementById("container");
@@ -17,7 +17,7 @@ function initializeDOM(){
     content.setAttribute("id", "content");
     content.classList.add("content");
 
-    let inbox = document.createElement("button");
+    const inbox = document.createElement("button");
     inbox.setAttribute("class", "button-active");
     inbox.setAttribute("id", "inbox");
     inbox.textContent = "Inbox";
@@ -27,7 +27,7 @@ function initializeDOM(){
     });
     sidebar.appendChild(inbox);
 
-    let today = document.createElement("button");
+    const today = document.createElement("button");
     today.textContent = "Today";
     today.setAttribute("id", "today");
     today.addEventListener("click", e => {
@@ -36,7 +36,7 @@ function initializeDOM(){
     });
     sidebar.appendChild(today);
 
-    let week = document.createElement("button");
+    const week = document.createElement("button");
     week.textContent = "This Week";
     week.setAttribute("id", "week")
     week.addEventListener("click", e => {
@@ -45,6 +45,48 @@ function initializeDOM(){
     });
     sidebar.appendChild(week);
 
+
+
+    const addProject = document.createElement("button");
+    addProject.textContent = "Add Project";
+    addProject.addEventListener("click", e => {
+        const container = document.createElement("div");
+        container.setAttribute("id", "project-container");
+        const input = document.createElement("input");
+        input.setAttribute("type", "text");
+        input.setAttribute("id", "project-input");
+
+        const add = document.createElement("button");
+        add.textContent = "Add";
+        add.setAttribute("id", "add-project-confirm");
+        add.addEventListener("click", () =>{
+            projects.push(project(input.value));
+            loadProjects(sidebar);
+
+            sidebar.removeChild(container);
+            sidebar.appendChild(addProject);
+        });
+
+
+        const cancel = document.createElement("button");
+        cancel.textContent = "Cancel";
+        cancel.setAttribute("id", "cancel-project");
+        cancel.addEventListener("click", ()=>{
+
+            sidebar.removeChild(container);
+            sidebar.appendChild(addProject);
+
+        });
+        
+        container.appendChild(input);
+        container.appendChild(add);
+        container.appendChild(cancel);
+
+        sidebar.replaceChild(container, addProject);
+
+    });
+    sidebar.appendChild(addProject);
+
     container.appendChild(content);
     loadInboxContent();
 
@@ -52,6 +94,31 @@ function initializeDOM(){
 
 
 }
+
+function loadProjects(sidebar){
+    document.querySelectorAll(".project-button").forEach(button => {
+        sidebar.removeChild(button);
+    });
+    projects.sort((e1,e2) => {
+        e1.title.localeCompare(e2.title);
+    });
+
+    projects.forEach(project => {
+        const projectButton = document.createElement("button");
+        projectButton.classList.add("project-button");
+        projectButton.textContent = project.title;
+        projectButton.addEventListener("click", e => {
+            clickTab(e);
+            loadProjectContent(project);
+
+        });
+
+        sidebar.appendChild(projectButton);
+    });
+
+
+}
+
 
 function clickTab(e){
     const buttons = document.querySelectorAll(".button-active");
@@ -73,6 +140,62 @@ function replaceContent(){
 
 }
 
+function loadProjectContent(project){
+    const projectContent = replaceContent();
+    
+    const title = document.createElement("p");
+    title.textContent = project.title;
+    title.classList.add("tabTitle");
+    projectContent.appendChild(title);
+
+    const projectTasks = tasks.filter(task => task.project == project.title);
+
+
+
+
+
+
+}
+
+function loadTasks(content, taskList){
+    taskList.forEach((task,index) => {
+        task.currentIndex = index;
+        const taskDiv = document.createElement("div");
+        taskDiv.classList.add("task-div");
+        taskDiv.setAttribute("id", `${index}`);
+        task.node = taskDiv;
+
+        content.appendChild(taskDiv);
+        taskDiv.appendChild(icon(c).node[0]);
+
+
+        const text = document.createElement("p"); 
+        text.classList.add("task-text"); 
+        let date = (task.date == -2)? "None": format(task.date, 'M/dd/yyyy');
+        text.textContent = `Deadline: ${date} Description: ` + task.description; 
+        taskDiv.appendChild(text);
+    });
+    document.querySelectorAll(".fa-circle").forEach(circle => {
+        circle.addEventListener("click", e => {
+            const indexFunction = () => {
+                let index = 0; 
+                tasks.forEach(task => {
+                if(task.node.id  == e.target.parentNode.id){
+                        index = task.currentIndex;
+                    }
+                });
+                return index;
+            }
+            content.removeChild(e.target.parentNode);
+            tasks.splice(indexFunction(), 1);
+            loadInboxContent();
+
+        });
+    });
+
+}
+
+
 function loadInboxContent(){
     const inboxContent = replaceContent();
 
@@ -81,6 +204,9 @@ function loadInboxContent(){
     title.textContent = "Inbox";
     title.classList.add("tabTitle");
     inboxContent.appendChild(title);
+    tasks.sort((e1,e2) => {
+        return compareAsc(e1.date, e2.date);
+    });
 
     tasks.forEach((task,index) => {
         task.currentIndex = index;
@@ -95,8 +221,7 @@ function loadInboxContent(){
 
         const text = document.createElement("p"); 
         text.classList.add("task-text"); 
-        let date = (task.date == "None")? "None": format(task.date, 'M/dd/yyyy');
-        console.log(date);
+        let date = (task.date == -2)? "None": format(task.date, 'M/dd/yyyy');
         text.textContent = `Deadline: ${date} Description: ` + task.description; 
         taskDiv.appendChild(text);
     });
@@ -129,24 +254,6 @@ function loadInboxContent(){
 }
 
 
-    /* Stuff to add: 
-    the addtaskbutton should have an eventlistener that brings up a prompt to
-    allow the user to submit details about their todo task. 
-    During which, the addtaskbutton is removed until the user has submitted their 
-    todo
-    
-    Add the todo task to a list of current tasks. 
-    
-    Upon each reload of loadInbox Content, we need to get the tasks in order
-    (via sorting the list of tasks by date) and then re-display them each time.
-
-    Might have to seperate this loadInboxContent with another one just for page initialization
-    vs re-entry.
-
-
-
-
-    */
 
 
 function createPopUp(inboxContent, addTaskButton){
@@ -171,14 +278,13 @@ function createPopUp(inboxContent, addTaskButton){
     add.textContent = "Add";
     add.addEventListener("click", e => {
         if(dateInput.value == null || dateInput.value == ""){
-            tasks.push(task(input.value, null, "None"));  
+            tasks.push(task(input.value, null, -2));  
         }
         else{
             const dateTokens = dateInput.value.split('-');
             const date = new Date(dateTokens[0], `${Number(dateTokens[1]) - 1}`, dateTokens[2]);
             tasks.push(task(input.value, null, date));  
         }
-        console.log(tasks);
         loadInboxContent();
 
     });
@@ -194,24 +300,16 @@ function createPopUp(inboxContent, addTaskButton){
     });
 
     popUpBox.appendChild(cancel);
-
-
-
-
-
-
-
-
-
-
-
 }
+
+
+
+
 
 function loadTodayContent(){
     const todayContent = replaceContent();
 
     const todayTasks = tasks.filter(task => isToday(task.date));
-    console.log(todayTasks);
     const title = document.createElement("p");
     title.textContent = "Today";
     title.classList.add("tabTitle");
@@ -230,8 +328,7 @@ function loadTodayContent(){
 
         const text = document.createElement("p"); 
         text.classList.add("task-text"); 
-        let date = (task.date == "None")? "None": format(task.date, 'MM\/dd\/yyyy');
-        console.log(date);
+        let date = (task.date == -2)? "None": format(task.date, 'MM\/dd\/yyyy');
         text.textContent = `Deadline: ${date} Description: ` + task.description; 
         taskDiv.appendChild(text);
     });
@@ -248,6 +345,26 @@ function loadWeekContent(){
     title.textContent = "This Week";
     title.classList.add("tabTitle");
     weekContent.appendChild(title);
+
+    const weekTasks = tasks.filter(task => isThisWeek(task.date));
+
+    weekTasks.forEach((task,index) => {
+        task.currentIndex = index;
+        const taskDiv = document.createElement("div");
+        taskDiv.classList.add("task-div");
+        taskDiv.setAttribute("id", `${index}`);
+        task.node = taskDiv;
+
+        weekContent.appendChild(taskDiv);
+        taskDiv.appendChild(icon(c).node[0]);
+
+
+        const text = document.createElement("p"); 
+        text.classList.add("task-text"); 
+        let date = (task.date == -2)? "None": format(task.date, 'MM\/dd\/yyyy');
+        text.textContent = `Deadline: ${date} Description: ` + task.description; 
+        taskDiv.appendChild(text);
+    });
 
 }
 

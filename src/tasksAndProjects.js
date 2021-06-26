@@ -1,6 +1,6 @@
 
-let tasks = [];
-let task = (description, project,date) => {
+const tasks = [];
+const task = (description, project,date) => {
     const proto = {
         type: "task",
         project,
@@ -11,8 +11,18 @@ let task = (description, project,date) => {
     return Object.assign({}, proto, {description, project, date});
 }
 
+const projects = [];
+const project = (title) => {
+    const proto = {
+        type: "project",
+        title,
+        tasks: null,
+    }
+    return Object.assign({}, proto, {title});
+
+}
 
 
 
-export {task, tasks};
+export {task, tasks, projects, project};
 
